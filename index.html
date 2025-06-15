@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>İnşaat Takip ve Planlama Sistemi</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+
+    <div id="login-screen">
+        <div class="login-box">
+            <h2 class="text-3xl font-bold text-blue-700 mb-8 text-center">Sisteme Giriş</h2>
+            <form id="login-form" method="POST">
+                <div class="mb-4">
+                    <label for="username" class="block text-gray-700 font-bold mb-2">Kullanıcı Adı:</label>
+                    <input type="text" id="username" name="username" class="w-full" value="admin" required>
+                </div>
+                <div class="mb-6">
+                    <label for="password" class="block text-gray-700 font-bold mb-2">Şifre:</label>
+                    <input type="password" id="password" name="password" class="w-full" value="password123" required>
+                </div>
+                <button type="submit" class="w-full bg-blue-600 hover:bg-blue-700 text-white font-bold py-3 px-4 rounded-lg">Giriş Yap</button>
+            </form>
+        </div>
+    </div>
+    
+    <div id="app-container" class="hidden">
+        <nav id="sidebar">
+            <div class="sidebar-header">
+                <span class="sidebar-title">İNŞAAT PRO</span>
+                <div class="sidebar-controls">
+                    <button id="expand-all-btn" title="Tümünü Genişlet">+</button>
+                    <button id="collapse-all-btn" title="Tümünü Daralt">-</button>
+                    <button id="sidebar-toggle" title="Menüyü Gizle/Göster">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M19 12H5M12 19l-7-7 7-7"/></svg>
+                    </button>
+                </div>
+            </div>
+            <ul id="main-menu" class="sidebar-menu">
+                 <li><a href="#" data-page="dashboard"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M10 20v-6h4v6h5v-8h3L12 3L2 12h3v8z"></path></svg> <span>Kontrol Paneli</span></a></li>
+                <li class="has-submenu">
+                    <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M4 20q-.825 0-1.412-.587T2 18V6q0-.825.588-1.412T4 4h16q.825 0 1.413.588T22 6v12q0 .825-.587 1.413T20 20zm2-2h12V9H6zM6 7h12v1H6zm0 11v-1z"/></svg> <span>Proje Yönetimi</span> <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="m12 15.4l-6-6L7.4 8l4.6 4.6L16.6 8L18 9.4z"/></svg></a>
+                    <ul>
+                        <li><a href="#" data-page="projects">Projeler Listesi</a></li>
+                        <li><a href="#" data-page="planning">Zaman Çizelgesi (Gantt)</a></li>
+                        <li><a href="#" data-page="planningCharts">Proje Grafikleri</a></li>
+                        <li><a href="#" data-page="placeholder" data-title="Doküman Yönetimi">Doküman Yönetimi</a></li>
+                    </ul>
+                </li>
+                 <li class="has-submenu">
+                    <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M12 12q-1.65 0-2.825-1.175T8 8q0-1.65 1.175-2.825T12 4q1.65 0 2.825 1.175T16 8q0 1.65-1.175 2.825T12 12m-8 8v-2.8q0-.85.438-1.562T5.6 14.55q1.55-.775 3.15-1.162T12 13q1.65 0 3.25.388t3.15 1.162q.725.375 1.163 1.088T20 17.2V20z"/></svg> <span>Personel Yönetimi</span> <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="m12 15.4l-6-6L7.4 8l4.6 4.6L16.6 8L18 9.4z"/></svg></a>
+                    <ul>
+                        <li><a href="#" data-page="personnel">Personel Listesi</a></li>
+                        <li><a href="#" data-page="cardSwipes">Puantaj & Devam Takip</a></li>
+                    </ul>
+                </li>
+                 <li class="has-submenu">
+                    <a href="#"><svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M17 19v-4h-2v4H9v-7L12 9l3 3v-2.1l-3-3l-7 7V19zm-4-8L12 10L5 17v2h14v-5zM19.3 16H21v-2h-1.7zm0-4H21V8h-1.7zm0-4H21V4h-1.7z"/></svg> <span>Saha Yönetimi</span> <svg class="chevron" xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"><path fill="currentColor" d="m12 15.4l-6-6L7.4 8l4.6 4.6L16.6 8L18 9.4z"/></svg></a>
+                    <ul>
+                        <li><a href="#" data-page="dailyActivities">Günlük Raporlar</a></li>
+                        <li><a href="#" data-page="workCodes">İş Kodları</a></li>
+                    </ul>
+                </li>
+            </ul>
+            <div class="sidebar-footer">
+                <div id="user-info">
+                    <div id="user-avatar">A</div>
+                    <span id="user-id-display">Kullanıcı</span>
+                </div>
+                <button id="logout-button" title="Çıkış Yap">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24"><path fill="currentColor" d="M5 21q-.825 0-1.412-.587T3 19V5q0-.825.588-1.412T5 3h7v2H5v14h7v2zm11-4l-1.375-1.45l2.55-2.55H9v-2h8.175l-2.55-2.55L16 7l5 5z"/></svg>
+                </button>
+            </div>
+        </nav>
+        <main id="main-content">
+            <div id="dashboard-screen" class="hidden"></div>
+            <div id="projects-screen" class="hidden"></div>
+            <div id="work-codes-screen" class="hidden"></div>
+            <div id="daily-activities-screen" class="hidden"></div>
+            <div id="personnel-screen" class="hidden"></div>
+            <div id="card-swipes-screen" class="hidden"></div>
+            <div id="planning-screen" class="hidden"></div>
+            <div id="planning-charts-screen" class="hidden"></div>
+            <div id="placeholder-screen" class="hidden"></div>
+        </main>
+    </div>
+    <div id="info-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 z-50 flex items-center justify-center p-4">
+        <div class="bg-white rounded-lg shadow-xl p-8 max-w-sm w-full text-center">
+            <h3 class="text-lg font-bold mb-4">Bilgi</h3>
+            <p id="modal-message" class="mb-6"></p>
+            <button id="modal-close-button" class="bg-blue-600 hover:bg-blue-700 text-white font-bold py-2 px-6 rounded-lg">Kapat</button>
+        </div>
+    </div>
+    <script src="js/script.js"></script>
+    <div id="form-modal" class="hidden fixed inset-0 bg-black bg-opacity-50 flex items-center justify-center p-4" style="z-index: 1050;">
+        <div id="form-modal-content" class="bg-white rounded-lg shadow-xl p-8 max-w-2xl w-full">
+            <h3 id="form-modal-title" class="text-xl font-bold mb-6 text-gray-800"></h3>
+            <div id="form-modal-body">
+                </div>
+            <div class="flex justify-end space-x-2 mt-6">
+                <button id="modal-cancel-btn" class="bg-gray-500 hover:bg-gray-600 text-white font-bold py-2 px-4 rounded-lg">İptal</button>
+                <button id="modal-save-btn" class="bg-green-600 hover:bg-green-700 text-white font-bold py-2 px-4 rounded-lg">Kaydet</button>
+            </div>
+        </div>
+    </div>
+    <script src="js/script.js"></script>
+</body>
+</html>
