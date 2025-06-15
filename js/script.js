@@ -14,7 +14,7 @@ document.addEventListener('DOMContentLoaded', () => {
         planning: getEl('planning-screen'), planningCharts: getEl('planning-charts-screen'),
         placeholder: getEl('placeholder-screen')
     };
-    
+
     // Genel Elementler
     const loginForm = getEl('login-form'), logoutButton = getEl('logout-button');
     const userIdDisplay = getEl('user-id-display'), userAvatar = getEl('user-avatar');
@@ -28,10 +28,9 @@ document.addEventListener('DOMContentLoaded', () => {
     const formModalBody = getEl('form-modal-body');
     const formModalCancelBtn = getEl('modal-cancel-btn');
     const formModalSaveBtn = getEl('modal-save-btn');
-    
+
     // Durum Değişkenleri
-    let isLoggedIn = false, currentUserName = null, ganttChartView = 'daily', activeCharts = [];
-    let currentPlanItems = [], ganttMinDate, ganttMaxDate;
+    let isLoggedIn = false, currentUserName = null, activeCharts = [];
     let allActivities = []; // Tarih filtresi için
 
     // ======================================================================
@@ -41,17 +40,12 @@ document.addEventListener('DOMContentLoaded', () => {
         const style = document.createElement('style');
         style.textContent = `
             @keyframes fadeInUp {
-                from { opacity: 0; transform: translate3d(0, 30px, 0) scale(0.95); }
+                from { opacity: 0; transform: translate3d(0, 40px, 0) scale(0.97); }
                 to { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
             }
             @keyframes fadeOutDown {
                 from { opacity: 1; transform: translate3d(0, 0, 0) scale(1); }
-                to { opacity: 0; transform: translate3d(0, 20px, 0) scale(0.95); }
-            }
-            #form-modal-content {
-                box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25);
-                border: 1px solid #e0e0e0;
-                transition: transform 0.3s ease, opacity 0.3s ease;
+                to { opacity: 0; transform: translate3d(0, 30px, 0) scale(0.97); }
             }
             .modal-entering #form-modal-content {
                 animation: fadeInUp 0.3s ease forwards;
@@ -62,7 +56,7 @@ document.addEventListener('DOMContentLoaded', () => {
         `;
         document.head.appendChild(style);
     }
-    
+
     // ======================================================================
     // ==                  3. HELPER & UTILITY FUNCTIONS                   ==
     // ======================================================================
@@ -77,7 +71,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function populateDropdown(selectElement, url, valueField, textField, prompt, filter = null, selectedValue = null) {
         try { if (!selectElement) return; const finalUrl = filter ? `${url}?${filter.key}=${filter.value}` : url; const response = await authenticatedFetch(finalUrl); const result = await response.json(); if (result.success) { selectElement.innerHTML = `<option value="">-- ${prompt} --</option>`; result.data.forEach(item => { const option = document.createElement('option'); option.value = item[valueField]; option.textContent = Array.isArray(textField) ? textField.map(f => item[f]).join(' ') : item[textField]; if (item[valueField] == selectedValue) option.selected = true; selectElement.appendChild(option); }); } } catch (error) { console.error(`Dropdown doldurulamadı (${url}):`, error); }
     }
-    
+
     // ======================================================================
     // ==                    4. AUTH & VIEW MANAGEMENT                     ==
     // ======================================================================
@@ -94,7 +88,7 @@ document.addEventListener('DOMContentLoaded', () => {
         const link=mainMenu.querySelector(`a[data-page='${pageName}']`);
         if(link){link.classList.add('active'); const li=link.closest('li'); if(li)li.classList.add('active'); const sub=link.closest('.has-submenu'); if(sub){sub.classList.add('active');if(!sub.classList.contains('open'))sub.classList.add('open');}}
     }
-    
+
     // ======================================================================
     // ==                6. DYNAMIC MODAL & FORM MANAGEMENT              ==
     // ======================================================================
@@ -131,14 +125,14 @@ document.addEventListener('DOMContentLoaded', () => {
     const handleDailyActivitySubmit = (formData) => handleApiSubmit(`api/daily_activities.php${formData.get('id')?`?id=${formData.get('id')}`:''}`, formData.get('id')?'PUT':'POST', formData, loadDailyActivitiesPage);
     const handleEmployeeSubmit = (formData) => handleApiSubmit(`api/employees.php${formData.get('id')?`?id=${formData.get('id')}`:''}`, formData.get('id')?'PUT':'POST', formData, loadPersonnelPage);
     async function deleteItem(module, id, successCallback) { if (!confirm('Bu kaydı silmek istediğinizden emin misiniz?')) return; try { const response = await authenticatedFetch(`api/${module}.php?id=${id}`, { method: 'DELETE' }); const result = await response.json(); showInfoModal(result.message, result.success); if(result.success) successCallback(); } catch(error) { showInfoModal('Silme hatası: ' + error.message, false); } }
-    
+
     // ======================================================================
     // ==                  8. PAGE LOADERS & RENDERERS                     ==
     // ======================================================================
     function destroyActiveCharts() { activeCharts.forEach(chart => chart.destroy()); activeCharts = []; }
     function loadPlaceholderPage(title='...') { destroyActiveCharts(); appScreens.placeholder.innerHTML = `<div class="main-content-area"><h2 class="text-3xl font-bold text-blue-700">${title}</h2><p>Bu modül yapım aşamasındadır.</p></div>`; }
     function loadDashboard() { destroyActiveCharts(); appScreens.dashboard.innerHTML = `<div class="main-content-area"><h2 class="text-3xl font-bold text-blue-700 mb-8">Kontrol Paneli</h2><p class="text-center text-gray-600">Hoş geldiniz, ${currentUserName}.</p></div>`; }
-    
+
     function renderTableRows(data, columns, module) {
         return data.map(item=>`<tr data-item='${JSON.stringify(item)}'> ${columns.map(c=>`<td class="p-4">${c.render?c.render(item[c.key],item):(item[c.key]||'N/A')}</td>`).join('')} ${module?`<td class="p-4 space-x-2"><button class="edit-btn text-white bg-blue-600 hover:bg-blue-700 p-2 rounded text-sm" data-module="${module}">Düzenle</button><button class="delete-btn text-white bg-red-500 hover:bg-red-600 p-2 rounded text-sm" data-id="${item.id}" data-module="${module}">Sil</button></td>`:''} </tr>`).join('');
     }
@@ -156,12 +150,12 @@ document.addEventListener('DOMContentLoaded', () => {
             screen.innerHTML = result.success ? renderGenericTable({ ...options, data: result.data }) : `<p class="text-red-500">${options.title} yüklenemedi: ${result.message}</p>`;
         } catch (error) { screen.innerHTML = `<p class="text-red-500">Hata: ${error.message}</p>`; }
     }
-    
+
     const loadProjectsPage = () => loadPageWithData(appScreens.projects, 'api/projects.php', { title: 'Projeler', columns: [{header:'Proje Adı',key:'name'},{header:'Kod',key:'code'},{header:'Lokasyon',key:'location'},{header:'Bütçe',key:'budget',render:(v)=>Number(v).toLocaleString('tr-TR',{style:'currency',currency:'TRY'})}] });
     const loadWorkCodesPage = () => loadPageWithData(appScreens.workCodes, 'api/work_codes.php', { title: 'İş Kodları', module: 'work_codes', columns: [{header:'Kod',key:'code'},{header:'Açıklama',key:'description'}] });
     const loadPersonnelPage = () => loadPageWithData(appScreens.personnel, 'api/employees.php', { title: 'Personel Listesi', module: 'employees', columns: [{header:'Ad Soyad',key:'first_name',render:(v,r)=>`${r.first_name} ${r.last_name}`},{header:'Departman',key:'department_name'},{header:'Pozisyon',key:'position_name'},{header:'İşe Başlama',key:'start_date',render:(v)=>new Date(v).toLocaleDateString('tr-TR')}] });
     const loadCardSwipesPage = () => loadPageWithData(appScreens.cardSwipes, 'api/card_swipes.php', { title: 'Puantaj & Devam Takip', columns: [{header:'Personel', key:'employee_first_name', render:(v,r)=>`${r.employee_first_name} ${r.employee_last_name}`}, {header:'Zaman', key:'swipe_time', render:(v)=>new Date(v).toLocaleString('tr-TR')}, {header:'Tip', key:'swipe_type'}, {header:'Cihaz', key:'device_id'}] });
-    
+
     async function loadDailyActivitiesPage() {
         destroyActiveCharts();
         const screen = appScreens.dailyActivities;
@@ -178,14 +172,212 @@ document.addEventListener('DOMContentLoaded', () => {
             } else { screen.innerHTML = `<p class="text-red-500">Raporlar yüklenemedi: ${result.message}</p>`; }
         } catch (error) { screen.innerHTML = `<p class="text-red-500">Hata: ${error.message}</p>`; }
     }
-    async function loadPlanningPage() { /* ... */ } function renderGanttChart() { /* ... */ } function drawGanttTimeScale() { /* ... */ } async function loadPlanningChartsPage() { /* ... */ }
+
+    // ======================================================================
+    // ==             GANTT CHART & PLANNING PAGE LOGIC (GÜNCELLENDİ)    ==
+    // ======================================================================
+
+    // Bu global değişkenler Gantt şeması verilerini ve durumunu tutar
+    let currentPlanItems = [], ganttMinDate, ganttMaxDate;
+    let ganttChartView = 'daily'; // 'daily', 'weekly', 'monthly' gibi görünümler eklenebilir
+
+    /**
+     * Gün farkını hesaplayan yardımcı fonksiyon.
+     * @param {Date} d1 İlk tarih
+     * @param {Date} d2 İkinci tarih
+     * @returns {number} İki tarih arasındaki gün sayısı
+     */
+    function dateDiffInDays(d1, d2) {
+        const _MS_PER_DAY = 1000 * 60 * 60 * 24;
+        const utc1 = Date.UTC(d1.getFullYear(), d1.getMonth(), d1.getDate());
+        const utc2 = Date.UTC(d2.getFullYear(), d2.getMonth(), d2.getDate());
+        return Math.floor((utc2 - utc1) / _MS_PER_DAY);
+    }
+
+    /**
+     * Zaman çizelgesini (sağ taraf) ve bugünün işaretçisini çizer.
+     */
+    function drawGanttTimeScale() {
+        const timelineGrid = document.querySelector('.gantt-timeline-grid');
+        if (!timelineGrid) return;
+        
+        timelineGrid.innerHTML = ''; // Önceki çizimi temizle
+
+        const totalDays = dateDiffInDays(ganttMinDate, ganttMaxDate) + 1;
+        timelineGrid.style.gridTemplateColumns = `repeat(${totalDays}, 40px)`;
+        
+        const today = new Date();
+        today.setHours(0,0,0,0);
+
+        let currentMonth = -1;
+        for (let i = 0; i < totalDays; i++) {
+            const dayDate = new Date(ganttMinDate);
+            dayDate.setDate(ganttMinDate.getDate() + i);
+
+            // Ay başlıklarını oluştur
+            if (dayDate.getMonth() !== currentMonth) {
+                currentMonth = dayDate.getMonth();
+                const monthName = dayDate.toLocaleString('tr-TR', { month: 'long' });
+                const year = dayDate.getFullYear();
+                const monthHeader = document.createElement('div');
+                monthHeader.className = 'gantt-month-header';
+                monthHeader.textContent = `${monthName} ${year}`;
+                monthHeader.style.gridColumnStart = i + 1;
+                // Ayın kaç gün sürdüğünü hesaplayarak başlığı o kadar genişlet
+                const daysInMonth = new Date(dayDate.getFullYear(), dayDate.getMonth() + 1, 0).getDate();
+                const remainingDaysInMonth = daysInMonth - dayDate.getDate() + 1;
+                monthHeader.style.gridColumnEnd = `span ${Math.min(remainingDaysInMonth, totalDays - i)}`;
+                timelineGrid.appendChild(monthHeader);
+            }
+
+            // Gün başlıklarını oluştur
+            const dayHeader = document.createElement('div');
+            dayHeader.className = 'gantt-day-header';
+            dayHeader.textContent = dayDate.getDate();
+            dayHeader.style.gridRow = '2';
+            dayHeader.style.gridColumn = `${i + 1}`;
+            
+            // Bugünün tarihini özel bir işaretçi ile vurgula
+            if (dateDiffInDays(dayDate, today) === 0) {
+                dayHeader.classList.add('gantt-today-marker');
+                const todayLabel = document.createElement('div');
+                todayLabel.className = 'gantt-today-label';
+                todayLabel.textContent = 'Bugün';
+                dayHeader.appendChild(todayLabel);
+            }
+
+            timelineGrid.appendChild(dayHeader);
+        }
+    }
+
+    /**
+     * Her bir aktivite için Gantt çubuklarını çizer.
+     */
+    function drawGanttBars() {
+        const timelineGrid = document.querySelector('.gantt-timeline-grid');
+        if (!timelineGrid) return;
+
+        currentPlanItems.forEach((item, index) => {
+            const startDate = new Date(item.start_date);
+            const endDate = new Date(item.end_date);
+
+            const startDayIndex = dateDiffInDays(ganttMinDate, startDate);
+            const durationDays = dateDiffInDays(startDate, endDate) + 1;
+
+            const ganttBar = document.createElement('div');
+            ganttBar.className = 'gantt-bar';
+            ganttBar.style.gridRow = `${index + 3}`; // 1. satır ay, 2. satır gün, 3'ten başla
+            ganttBar.style.gridColumn = `${startDayIndex + 1} / span ${durationDays}`;
+            ganttBar.title = `${item.activity_name}: ${item.start_date} - ${item.end_date}`;
+
+            const ganttProgress = document.createElement('div');
+            ganttProgress.className = 'gantt-progress';
+            ganttProgress.style.width = `${item.progress_percentage}%`;
+            ganttProgress.textContent = `${item.progress_percentage}%`;
+
+            ganttBar.appendChild(ganttProgress);
+            timelineGrid.appendChild(ganttBar);
+        });
+    }
+
+    /**
+     * Ana Gantt Şeması oluşturma fonksiyonu. HTML yapısını kurar ve diğer çizim fonksiyonlarını çağırır.
+     */
+    function renderGanttChart() {
+        const screen = appScreens.planning;
+        screen.innerHTML = ''; // Temizle
+
+        if (!currentPlanItems || currentPlanItems.length === 0) {
+            screen.innerHTML = `<div class="main-content-area"><p>Gösterilecek plan verisi bulunamadı.</p></div>`;
+            return;
+        }
+
+        // Proje planındaki en erken ve en geç tarihleri bul
+        const dates = currentPlanItems.flatMap(item => [new Date(item.start_date), new Date(item.end_date)]);
+        ganttMinDate = new Date(Math.min(...dates));
+        ganttMaxDate = new Date(Math.max(...dates));
+        // Kenarlarda boşluk bırakmak için
+        ganttMinDate.setDate(ganttMinDate.getDate() - 5);
+        ganttMaxDate.setDate(ganttMaxDate.getDate() + 5);
+
+
+        // Gantt Şeması'nın ana HTML iskeletini oluştur
+        const ganttContainer = `
+            <div class="main-content-area-full gantt-container">
+                <div class="flex justify-between items-center mb-4">
+                    <h2 class="text-3xl font-bold text-blue-700">Proje Zaman Çizelgesi (Gantt)</h2>
+                    <div class="flex items-center space-x-4">
+                        <div class="flex rounded-md shadow-sm" role="group">
+                          <button type="button" data-view="daily" class="gantt-view-btn active">Günlük</button>
+                          <button type="button" data-view="weekly" class="gantt-view-btn">Haftalık</button>
+                          <button type="button" data-view="monthly" class="gantt-view-btn">Aylık</button>
+                        </div>
+                    </div>
+                </div>
+                <div class="gantt-grid-container bg-white shadow-lg rounded-lg">
+                    <div class="gantt-left-pane">
+                        <div class="gantt-header gantt-activity-header">Aktivite</div>
+                        <div class="gantt-header">Başlangıç</div>
+                        <div class="gantt-header">Bitiş</div>
+                        <div class="gantt-header">Bütçe (sa)</div>
+                        <div class="gantt-header">Gerçek (sa)</div>
+                        <div class="gantt-header">İlerleme</div>
+                        ${currentPlanItems.map(item => `
+                            <div class="gantt-activity-item" title="${item.activity_name}"><strong>${item.wbs_code}</strong> ${item.activity_name}</div>
+                            <div class="gantt-date-item">${new Date(item.start_date).toLocaleDateString('tr-TR')}</div>
+                            <div class="gantt-date-item">${new Date(item.end_date).toLocaleDateString('tr-TR')}</div>
+                            <div class="gantt-hours-item">${item.budgeted_man_hour}</div>
+                            <div class="gantt-hours-item">${item.actual_man_hour.toFixed(1)}</div>
+                            <div class="gantt-progress-item">${item.progress_percentage}%</div>
+                        `).join('')}
+                    </div>
+                    <div class="gantt-right-pane">
+                        <div class="gantt-timeline-grid">
+                           </div>
+                    </div>
+                </div>
+            </div>
+        `;
+        screen.innerHTML = ganttContainer;
+
+        // Çizim fonksiyonlarını çağır
+        drawGanttTimeScale();
+        drawGanttBars();
+    }
+
+
+    /**
+     * Planlama sayfasını yükler. API'den verileri çeker ve Gantt şemasını render eder.
+     */
+    async function loadPlanningPage() {
+        destroyActiveCharts();
+        const screen = appScreens.planning;
+        screen.innerHTML = `<div class="main-content-area-full"><p>Yükleniyor...</p></div>`;
+        try {
+            const response = await authenticatedFetch('api/planning.php');
+            const result = await response.json();
+            if (result.success) {
+                currentPlanItems = result.data.plan_items; // API'den gelen veriyi sakla
+                renderGanttChart(); // Gantt'ı çiz
+            } else {
+                screen.innerHTML = `<p class="text-red-500">Planlama verileri yüklenemedi: ${result.message}</p>`;
+            }
+        } catch (error) {
+            screen.innerHTML = `<p class="text-red-500">Hata: ${error.message}</p>`;
+        }
+    }
+
+    async function loadPlanningChartsPage() {
+        loadPlaceholderPage("Proje Grafikleri"); // Bu sayfa istendiğinde şimdilik placeholder göster
+    }
+
 
     // ======================================================================
     // ==                    9. PAGE ROUTING & MANAGEMENT                  ==
     // ======================================================================
-    const pageLoaders = { dashboard: loadDashboard, projects: loadProjectsPage, workCodes: loadWorkCodesPage, dailyActivities: loadDailyActivitiesPage, personnel: loadPersonnelPage, cardSwipes: loadCardSwipesPage, planning: loadPlanningPage, planningCharts: () => loadPlaceholderPage("Grafikler"), placeholder: (p) => loadPlaceholderPage(p.title) };
+    const pageLoaders = { dashboard: loadDashboard, projects: loadProjectsPage, workCodes: loadWorkCodesPage, dailyActivities: loadDailyActivitiesPage, personnel: loadPersonnelPage, cardSwipes: loadCardSwipesPage, planning: loadPlanningPage, planningCharts: loadPlanningChartsPage, placeholder: (p) => loadPlaceholderPage(p.title) };
     function showPage(pageName, params = null) { Object.values(appScreens).forEach(screen => screen&&screen.classList.add('hidden')); if (!isLoggedIn) { showLogin(); return; } const screenToShow = appScreens[pageName]; if (screenToShow) screenToShow.classList.remove('hidden'); setActiveMenuItem(pageName); const pageLoader = pageLoaders[pageName]; if (pageLoader) pageLoader(params); }
-    
+
     // ======================================================================
     // ==                10. EVENT LISTENERS & INITIALIZATION              ==
     // ======================================================================
@@ -193,7 +385,7 @@ document.addEventListener('DOMContentLoaded', () => {
     async function handleLogin(e) { if(e) e.preventDefault(); try { const r=await authenticatedFetch('api/auth.php', { method:'POST', headers:{'Content-Type':'application/json'}, body:JSON.stringify({username:getEl('username').value,password:getEl('password').value})}); const d=await r.json(); if(d.success) showApplication(d.data); else showInfoModal(`Giriş başarısız: ${d.message}`, false); } catch (err) { showInfoModal(`Ağ hatası: ${err.message}`, false); } }
     async function handleLogout() { await authenticatedFetch('api/auth.php?action=logout', { method: 'POST' }); document.cookie = "PHPSESSID=; expires=Thu, 01 Jan 1970 00:00:00 UTC; path=/;"; isLoggedIn = false; showLogin(); }
     async function checkAuthStatus() { try { const r=await authenticatedFetch('api/auth_check.php'); const d=await r.json(); if (d.success) showApplication(d.data); else showLogin(); } catch(e) { console.error("Oturum kontrolü hatası", e); showLogin(); } }
-    
+
     function setupEventListeners() {
         modalCloseButton.addEventListener('click', () => infoModal.classList.add('hidden'));
         formModalCancelBtn.addEventListener('click', () => hideFormModal());
@@ -236,7 +428,12 @@ document.addEventListener('DOMContentLoaded', () => {
                 const pageLoaderKey = Object.keys(pageLoaders).find(k => k.toLowerCase().includes(module));
                 if(module && pageLoaderKey) deleteItem(module, deleteButton.dataset.id, pageLoaders[pageLoaderKey]);
             } else if (ganttButton) {
+                // Bu kısım gelecekte haftalık/aylık görünümler için kullanılabilir.
+                document.querySelectorAll('.gantt-view-btn').forEach(b => b.classList.remove('active'));
+                ganttButton.classList.add('active');
                 ganttChartView = ganttButton.dataset.view;
+                // Şimdilik sadece renderGanttChart'ı tekrar çağırıyoruz, 
+                // ileride farklı view'lar için mantık eklenebilir.
                 renderGanttChart();
             }
         });

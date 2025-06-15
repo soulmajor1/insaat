@@ -115,6 +115,74 @@ tbody tr:hover { background-color: #f9fafb; }
 .sidebar-controls { display: flex; align-items: center; gap: 0.25rem; }
 #expand-all-btn, #collapse-all-btn { background: rgba(255,255,255,0.1); border: 1px solid rgba(255,255,255,0.2); color: var(--sidebar-text); cursor: pointer; padding: 0; width: 24px; height: 24px; font-size: 1.2rem; line-height: 24px; border-radius: 4px; transition: background-color 0.2s; }
 #expand-all-btn:hover, #collapse-all-btn:hover { background: rgba(255,255,255,0.2); color: white; }
+
+/* ================================================================== */
+/* ==                 MODAL STİLLERİ (DÜZELTİLMİŞ)                 == */
+/* ================================================================== */
+
+/* Modal'ın arkaplanını (overlay) tam ekran kaplayacak ve içeriği ortalayacak şekilde ayarlar */
+#form-modal {
+    position: fixed;
+    inset: 0;
+    background-color: rgba(0, 0, 0, 0.5); /* Yarı saydam siyah arkaplan */
+    z-index: 1050;
+    display: flex;         /* Flexbox'ı etkinleştir */
+    align-items: center;   /* Dikeyde ortala */
+    justify-content: center; /* Yatayda ortala */
+    padding: 1rem;         /* Küçük ekranlarda kenarlardan boşluk bırak */
+    overflow-y: auto;      /* Modal içeriği sığmazsa kaydırma çubuğu çıksın */
+}
+
+/* Modal içeriğinin (asıl pencere) stilini belirler */
+#form-modal-content {
+    background-color: white;
+    border-radius: 0.75rem; /* Daha belirgin yuvarlak köşeler */
+    box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.1), 0 10px 10px -5px rgba(0, 0, 0, 0.04); /* Daha modern bir gölge */
+    padding: 1.5rem 2rem;   /* İç boşluklar (üst/alt 1.5rem, sağ/sol 2rem) */
+    max-width: 48rem;       /* Modalın maksimum genişliği (daha büyük ekranlar için) */
+    width: 100%;            /* Genişliği içindeki alana yay */
+    transition: transform 0.3s ease, opacity 0.3s ease; /* Pürüzsüz geçiş animasyonu */
+    border: 1px solid #e5e7eb; /* İnce bir kenarlık */
+}
+
+/* Modal giriş animasyonu */
+@keyframes fadeInUp {
+    from {
+        opacity: 0;
+        transform: translate3d(0, 40px, 0) scale(0.97);
+    }
+    to {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+}
+
+/* Modal çıkış animasyonu */
+@keyframes fadeOutDown {
+    from {
+        opacity: 1;
+        transform: translate3d(0, 0, 0) scale(1);
+    }
+    to {
+        opacity: 0;
+        transform: translate3d(0, 30px, 0) scale(0.97);
+    }
+}
+
+/* Javascript tarafından eklenen animasyon sınıfları */
+.modal-entering #form-modal-content {
+    animation: fadeInUp 0.3s ease forwards;
+}
+
+.modal-leaving #form-modal-content {
+    animation: fadeOutDown 0.3s ease forwards;
+}
+
+
+/* ================================================================== */
+/* ==                 GANTT & GRAFİK STİLLERİ                      == */
+/* ================================================================== */
+
 .gantt-container { width: 100%; font-size: 0.8rem; }
 .gantt-grid-container { display: grid; grid-template-columns: 320px 90px 90px 80px 80px 60px 1fr; border: 1px solid var(--border-color); border-radius: 0.5rem; overflow: hidden; }
 .gantt-left-pane { display: grid; grid-template-columns: subgrid; grid-column: 1 / 7; position: sticky; left: 0; z-index: 10; background-color: white; border-right: 1px solid var(--border-color); }
